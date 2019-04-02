@@ -115,22 +115,31 @@ void HuffmanTable::encode(char *buffer, long size, std::ostream &out)
 {
 	out << *this;
 
-	std::vector<bool> content;
+	long p = 0;
+	for (auto v : code)
+		p += (v.second.size() * dict[v.first]);
+
+	bool content[p];
+	long q = 0;
 	for (long i = 0; i < size; i++)
 	{
-		std::vector<bool> enc = code[buffer[i]];
-		content.insert(content.end(), enc.begin(), enc.end());
+		auto &enc = code[buffer[i]];
+		for (auto j : enc)
+		{
+			content[q] = j;
+			q++;
+		}
 	}
 
-	long p = std::ceil(content.size() / 8.0);
-	char *buf = new char[p];
-	for (long i = 0; i < content.size(); i++)
+	q = std::ceil(p / 8.0);
+	char *buf = new char[q];
+	for (long i = 0; i < p; i++)
 		buf[i / 8] += content[i] * (1 << (i % 8));
-	for (long i = 0; i < content.size() / 8.0; i++)
+	for (long i = 0; i < p / 8.0; i++)
 		out << buf[i];
 	out << std::endl;
 
-	out << content.size() << std::endl;
+	out << p << std::endl;
 
 	return;
 }
