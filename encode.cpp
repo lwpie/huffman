@@ -29,6 +29,8 @@ int main(int argv, char *argc[])
 		std::cerr << "File Open Failure" << std::endl;
 		return 1;
 	}
+	in.sync_with_stdio(false);
+	out.sync_with_stdio(false);
 
 	// read entire file to memory
 	std::filebuf *ptr;
