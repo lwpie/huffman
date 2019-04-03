@@ -5,10 +5,6 @@
 
 int main(int argv, char *argc[])
 {
-#ifdef DEBUG
-	time_t start_time = time(0);
-	std::cout << 0 << " Started" << std::endl;
-#endif
 	// get command line parameters
 	if ((argv != 4) ||
 		((strcmp(argc[1], "-o") != 0) && (strcmp(argc[3], "-o") != 0)))
@@ -38,6 +34,12 @@ int main(int argv, char *argc[])
 	}
 	in.sync_with_stdio(false);
 	out.sync_with_stdio(false);
+
+	// start timing
+#ifdef DEBUG
+	time_t start_time = time(0);
+	std::cout << 0 << " Started" << std::endl;
+#endif
 
 	// read entire file to memory
 	std::filebuf *ptr;

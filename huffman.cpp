@@ -1,32 +1,25 @@
 #include "huffman.h"
 
-HuffmanNode::HuffmanNode(std::pair<char, long> p)
-	: value(p.first), weight(p.second), left(NULL), right(NULL){};
+HuffmanNode::HuffmanNode(char c, long v)
+	: value(c), weight(v), left(NULL), right(NULL){};
 
 HuffmanNode::HuffmanNode(HuffmanNode *l, HuffmanNode *r) : left(l), right(r)
 {
 	weight = (*l).weight + (*r).weight;
 }
 
-void HuffmanTable::insert(char s)
+void HuffmanTable::insert(char c)
 {
-	auto ptr = dict.find(s);
-	if (ptr == dict.end())
-		dict.insert(std::make_pair(s, 1));
-	else
-		ptr->second++;
-	return;
+	long p = (long)c + 128;
+	dict[p]++;
 }
 
 void HuffmanTable::construct()
 {
-	// std::sort(dict.begin(), dict.end(),
-	//		  [](std::pair<char, long> x, std::pair<char, long> y) {
-	//			  return x.second < y.second;
-	//		  });
 	std::vector<HuffmanNode *> btree;
-	for (auto item : dict)
-		btree.push_back(new HuffmanNode(item));
+	for (long i = 0; i < 256; i++)
+		if (dict[i] != 0)
+			btree.push_back(new HuffmanNode((char)(i - 128), dict[i]));
 	while (btree.size() > 1)
 	{
 		std::sort(btree.begin(), btree.end(), [](HuffmanNode *x, HuffmanNode *y) {
@@ -124,7 +117,7 @@ void HuffmanTable::encode(char *buffer, long size, std::ostream &out)
 
 	long p = 0;
 	for (auto v : code)
-		p += (v.second.size() * dict[v.first]);
+		p += (v.second.size() * dict[(long)v.first + 128]);
 	out << p << std::endl;
 
 	long q = std::ceil(p / 8.0);
@@ -139,7 +132,7 @@ void HuffmanTable::encode(char *buffer, long size, std::ostream &out)
 			ptr++;
 		}
 
-	out << buf << std::endl;
+	out.write(buf, q);
 
 	delete[] buf;
 	return;

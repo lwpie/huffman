@@ -16,7 +16,7 @@ struct HuffmanNode
 	long weight;
 	HuffmanNode *left;
 	HuffmanNode *right;
-	HuffmanNode(std::pair<char, long> p);
+	HuffmanNode(char c, long v);
 	HuffmanNode(HuffmanNode *l, HuffmanNode *r);
 };
 
@@ -26,8 +26,8 @@ class HuffmanTable
 	void dfs(HuffmanNode *node, std::vector<bool> &path);
 
   public:
-	std::unordered_map<char, long> dict;
-	std::map<char, std::vector<bool>> code;
+	long dict[256] = {0};
+	std::unordered_map<char, std::vector<bool>> code;
 	HuffmanNode *tree = NULL;
 	void insert(char c);
 	void construct();
