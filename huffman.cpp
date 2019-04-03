@@ -125,12 +125,15 @@ long HuffmanTable::encode(char *buffer, long size, std::ostream &out)
 	for (long i = 0; i < q; i++)
 		buf[i] = 0;
 	long ptr = 0;
+	long power = 1;
 	for (long i = 0; i < size; i++)
+	{
 		for (auto j : code[buffer[i]])
 		{
-			buf[ptr / 8] += j * (1 << (ptr % 8));
-			ptr++;
+			buf[ptr++ >> 3] = j * power;
+			power == 1 << 7 ? power = 1 : power <<= 1;
 		}
+	}
 
 	out.write(buf, q);
 
