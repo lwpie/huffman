@@ -125,6 +125,7 @@ void HuffmanTable::encode(char *buffer, long size, std::ostream &out)
 	long p = 0;
 	for (auto v : code)
 		p += (v.second.size() * dict[v.first]);
+	out << p << std::endl;
 
 	long q = std::ceil(p / 8.0);
 	char *buf = new char[q];
@@ -138,11 +139,7 @@ void HuffmanTable::encode(char *buffer, long size, std::ostream &out)
 			ptr++;
 		}
 
-	for (long i = 0; i < p / 8.0; i++)
-		out << buf[i];
-	out << std::endl;
-
-	out << p << std::endl;
+	out << buf << std::endl;
 
 	delete[] buf;
 	return;
