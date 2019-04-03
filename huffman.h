@@ -7,6 +7,7 @@
 #include <map>
 #include <stack>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 struct HuffmanNode
@@ -25,14 +26,14 @@ class HuffmanTable
 	void dfs(HuffmanNode *node, std::vector<bool> &path);
 
   public:
-	std::map<char, long> dict;
+	std::unordered_map<char, long> dict;
 	std::map<char, std::vector<bool>> code;
 	HuffmanNode *tree = NULL;
 	void insert(char c);
 	void construct();
 	void destruct();
 	void walk();
-	friend std::ostream &operator<<(std::ostream &out, HuffmanTable &x);
+	friend std::ostream &operator<<(std::ostream &out, const HuffmanTable &x);
 	void encode(char *buffer, long size, std::ostream &out);
 	~HuffmanTable();
 };
