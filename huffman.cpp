@@ -32,6 +32,15 @@ void HuffmanTable::construct()
 		std::sort(btree.begin(), btree.end(), [](HuffmanNode *x, HuffmanNode *y) {
 			return (*x).weight < (*y).weight;
 		});
+		// nearly equals to
+		/*
+		long i = 0;
+		while ((i < btree.size()) &&
+			   (!(((*btree[i]).weight <= (*merge).weight) &&
+				  ((*merge).weight <= (*btree[i + 1]).weight))))
+			i++;
+		btree.insert(btree.begin() + i, merge);
+		*/
 		HuffmanNode *first = btree[0];
 		HuffmanNode *second = btree[1];
 		HuffmanNode *merge = new HuffmanNode(first, second);
