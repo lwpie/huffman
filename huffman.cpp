@@ -14,7 +14,7 @@ void HuffmanTable::insert(char s)
 	if (ptr == dict.end())
 		dict.insert(std::make_pair(s, 1));
 	else
-		dict[s]++;
+		ptr->second++;
 	return;
 }
 
@@ -105,10 +105,8 @@ void HuffmanTable::destruct()
 	return;
 }
 
-std::ostream &operator<<(std::ostream &out, HuffmanTable &x)
+std::ostream &operator<<(std::ostream &out, const HuffmanTable &x)
 {
-	x.construct();
-	x.walk();
 	out << x.code.size() << std::endl;
 	for (auto item : x.code)
 	{

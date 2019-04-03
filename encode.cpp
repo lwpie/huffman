@@ -1,7 +1,14 @@
 #include "huffman.h"
+#ifdef DEBUG
+#include <ctime>
+#endif
 
 int main(int argv, char *argc[])
 {
+#ifdef DEBUG
+	time_t start_time = time(0);
+	std::cout << 0 << " Started" << std::endl;
+#endif
 	// get command line parameters
 	if ((argv != 4) ||
 		((strcmp(argc[1], "-o") != 0) && (strcmp(argc[3], "-o") != 0)))
@@ -40,14 +47,34 @@ int main(int argv, char *argc[])
 	char *buffer = new char[size];
 	ptr->sgetn(buffer, size);
 	in.close();
-
+#ifdef DEBUG
+	time_t now_time = time(0);
+	std::cout << now_time - start_time << " File Read" << std::endl;
+#endif
 	// encode
 	HuffmanTable hash;
 	for (long i = 0; i < size; i++)
 		hash.insert(buffer[i]);
-
+#ifdef DEBUG
+	now_time = time(0);
+	std::cout << now_time - start_time << " Char Counted" << std::endl;
+#endif
 	// write into file
+	hash.construct();
+#ifdef DEBUG
+	now_time = time(0);
+	std::cout << now_time - start_time << " Tree Constructed" << std::endl;
+#endif
+	hash.walk();
+#ifdef DEBUG
+	now_time = time(0);
+	std::cout << now_time - start_time << " Tree Walked" << std::endl;
+#endif
 	hash.encode(buffer, size, out);
+#ifdef DEBUG
+	now_time = time(0);
+	std::cout << now_time - start_time << " File Encoded" << std::endl;
+#endif
 	delete[] buffer;
 	return 0;
 }
