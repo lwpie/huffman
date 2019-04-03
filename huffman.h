@@ -34,6 +34,6 @@ class HuffmanTable
 	void destruct();
 	void walk();
 	friend std::ostream &operator<<(std::ostream &out, const HuffmanTable &x);
-	void encode(char *buffer, long size, std::ostream &out);
+	long encode(char *buffer, long size, std::ostream &out);
 	~HuffmanTable();
 };

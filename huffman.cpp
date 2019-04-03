@@ -111,7 +111,7 @@ std::ostream &operator<<(std::ostream &out, const HuffmanTable &x)
 	return out;
 }
 
-void HuffmanTable::encode(char *buffer, long size, std::ostream &out)
+long HuffmanTable::encode(char *buffer, long size, std::ostream &out)
 {
 	out << *this;
 
@@ -135,7 +135,7 @@ void HuffmanTable::encode(char *buffer, long size, std::ostream &out)
 	out.write(buf, q);
 
 	delete[] buf;
-	return;
+	return q;
 }
 
 HuffmanTable::~HuffmanTable() { destruct(); }
