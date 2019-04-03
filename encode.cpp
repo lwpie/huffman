@@ -46,6 +46,6 @@ int main(int argv, char *argc[])
 
 	// write into file
 	hash.encode(buffer, size, out);
-	free(buffer);
+	delete[] buffer;
 	return 0;
 }
