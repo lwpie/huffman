@@ -49,13 +49,14 @@ int main(int argv, char *argc[])
 	// read entire file to memory
 	std::filebuf *ptr;
 	ptr = in.rdbuf();
-	long size = ptr->pubseekoff(0, std::ios::end, std::ios::in);
+	auto size = ptr->pubseekoff(0, std::ios::end, std::ios::in);
 	ptr->pubseekpos(0, std::ios::in);
 	char *buffer = new char[size];
 	ptr->sgetn(buffer, size);
 	in.close();
+
 #ifdef DEBUG
-	long sz = size;
+	double sz = size;
 	std::string r = "BKMGTE";
 	long e = 0;
 	while (sz >= 1024)
@@ -71,8 +72,10 @@ int main(int argv, char *argc[])
 #endif
 	// encode
 	HuffmanTable hash;
-	for (long i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
+	{
 		hash.insert(buffer[i]);
+	}
 #ifdef DEBUG
 	now = clock();
 	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tChar Counted"
@@ -91,7 +94,7 @@ int main(int argv, char *argc[])
 	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tTree Walked"
 			  << std::endl;
 #endif
-	long q = hash.encode(buffer, size, out);
+	auto q = hash.encode(buffer, size, out);
 #ifdef DEBUG
 	now = clock();
 	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tFile Encoded"

@@ -1,137 +1,124 @@
 #include "huffman.h"
+#include <cstring>
 
 HuffmanNode::HuffmanNode(char c, long v)
 	: value(c), weight(v), left(NULL), right(NULL){};
 
 HuffmanNode::HuffmanNode(HuffmanNode *l, HuffmanNode *r) : left(l), right(r)
 {
-	weight = (*l).weight + (*r).weight;
+	weight = l->weight + r->weight;
 }
 
-void HuffmanTable::insert(char c)
-{
-	long p = (long)c + 128;
-	dict[p]++;
-}
+void HuffmanTable::insert(char c) { count[(uint8_t)c]++; }
 
 void HuffmanTable::construct()
 {
 	std::vector<HuffmanNode *> btree;
-	for (long i = 0; i < 256; i++)
-		if (dict[i] != 0)
-			btree.push_back(new HuffmanNode((char)(i - 128), dict[i]));
+
+	for (int i = 0; i < 256; i++)
+	{
+		if (count[i] != 0)
+		{
+			btree.push_back(new HuffmanNode((char)(i), count[i]));
+		}
+	}
+
 	while (btree.size() > 1)
 	{
 		std::sort(btree.begin(), btree.end(), [](HuffmanNode *x, HuffmanNode *y) {
-			return (*x).weight < (*y).weight;
+			return x->weight < y->weight;
 		});
-		// nearly equals to
-		/*
-		long i = 0;
-		while ((i < btree.size()) &&
-			   (!(((*btree[i]).weight <= (*merge).weight) &&
-				  ((*merge).weight <= (*btree[i + 1]).weight))))
-			i++;
-		btree.insert(btree.begin() + i, merge);
-		*/
-		HuffmanNode *first = btree[0];
-		HuffmanNode *second = btree[1];
-		HuffmanNode *merge = new HuffmanNode(first, second);
+		HuffmanNode *merge = new HuffmanNode(btree[0], btree[1]);
 		btree.erase(btree.begin(), btree.begin() + 2);
 		btree.push_back(merge);
 	}
+
 	tree = btree[0];
-	return;
 }
 
-void HuffmanTable::dfs(HuffmanNode *node, std::vector<bool> &path)
+void HuffmanTable::dfs(HuffmanNode *node, std::vector<int> &path)
 {
-	if ((node->left == NULL) && (node->right == NULL))
-		code.insert(std::make_pair(node->value, path));
-	else
+
+	if ((node->left == nullptr) && (node->right == nullptr))
 	{
-		if (node->left != NULL)
-		{
-			path.push_back(false);
-			dfs(node->left, path);
-			path.pop_back();
-		}
-		if (node->right != NULL)
-		{
-			path.push_back(true);
-			dfs(node->right, path);
-			path.pop_back();
-		}
+		code[(uint8_t)node->value] = path;
+		return;
 	}
-	return;
+
+	if (node->left != nullptr)
+	{
+		path.push_back(0);
+		dfs(node->left, path);
+		path.pop_back();
+	}
+	if (node->right != nullptr)
+	{
+		path.push_back(1);
+		dfs(node->right, path);
+		path.pop_back();
+	}
 }
 
 void HuffmanTable::walk()
 {
 	auto root = tree;
-	std::vector<bool> path;
+	std::vector<int> path;
 	dfs(root, path);
-	return;
 }
 
-void HuffmanTable::destruct()
+void HuffmanTable::destruct(HuffmanNode *node)
 {
-	std::vector<HuffmanNode *> btree;
-	btree.push_back(tree);
-	while (btree.size() != 0)
-	{
-		long size = btree.size();
-		for (long i = 0; i < size; i++)
-		{
-			auto node = btree[i];
-			if (node != NULL)
-			{
-				if (node->left != NULL)
-					btree.push_back(node->left);
-				if (node->right != NULL)
-					btree.push_back(node->right);
-				free(node);
-			}
-		}
-		btree.erase(btree.begin(), btree.begin() + size);
-	}
-	return;
+	if (node == nullptr)
+		return;
+	destruct(node->left);
+	destruct(node->right);
+	delete (node);
 }
 
 std::ostream &operator<<(std::ostream &out, const HuffmanTable &x)
 {
 	out << x.code.size() << std::endl;
-	for (auto item : x.code)
+	for (int i = 0; i < x.code.size(); ++i)
 	{
-		long p = 0;
-		for (long i = 0; i < item.second.size(); i++)
-			p += (item.second[i] * (1 << i));
-		out << std::hex << p << "\t" << item.first << std::endl;
+		if (x.code[i].size() != 0)
+		{
+			long p = 0;
+			for (int j = 0; j < x.code[i].size(); j++)
+			{
+				p += (x.code[i][j] * (1 << j));
+			}
+			out << std::hex << p << "\t" << (char)i << std::endl;
+		}
 	}
 	return out;
 }
 
-long HuffmanTable::encode(char *buffer, long size, std::ostream &out)
+size_t HuffmanTable::encode(char *buffer, size_t size, std::ostream &out)
 {
-	out << *this;
 
-	long p = 0;
-	for (auto v : code)
-		p += (v.second.size() * dict[(long)v.first + 128]);
+	out << *this;
+	size_t p = 0;
+
+	for (int i = 0; i < code.size(); i++)
+		if (code[i].size() != 0)
+			p += (code[i].size() * count[i]);
 	out << p << std::endl;
 
-	long q = std::ceil(p / 8.0);
+	size_t q = std::ceil(p / 8.0);
 	char *buf = new char[q];
-	for (long i = 0; i < q; i++)
-		buf[i] = 0;
-	long ptr = 0;
-	long power = 1;
-	for (long i = 0; i < size; i++)
+
+	memset(buf, 0, q);
+
 	{
-		for (auto j : code[buffer[i]])
+		size_t ptr = 0;
+		int power = 1;
+		for (int i = 0; i < size; i++)
 		{
-			buf[ptr++ >> 3] = j * power;
-			power == 1 << 7 ? power = 1 : power <<= 1;
+			for (auto j : code[(uint8_t)buffer[i]])
+			{
+				buf[ptr++ >> 3] += j * power;
+				power == 1 << 7 ? power = 1 : power <<= 1;
+			}
 		}
 	}
 
@@ -141,4 +128,4 @@ long HuffmanTable::encode(char *buffer, long size, std::ostream &out)
 	return q;
 }
 
-HuffmanTable::~HuffmanTable() { destruct(); }
+HuffmanTable::~HuffmanTable() { destruct(tree); }
