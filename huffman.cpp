@@ -77,9 +77,13 @@ void HuffmanTable::destruct(HuffmanNode *node)
 
 std::ostream &operator<<(std::ostream &out, const HuffmanTable &x)
 {
-	out << x.code.size() << std::endl;
+	int t = 0;
 	for (int i = 0; i < x.code.size(); ++i)
-	{
+		if (x.code[i].size() != 0)
+			t++;
+	out << t << std::endl;
+
+	for (int i = 0; i < x.code.size(); ++i)
 		if (x.code[i].size() != 0)
 		{
 			long p = 0;
@@ -89,7 +93,7 @@ std::ostream &operator<<(std::ostream &out, const HuffmanTable &x)
 			}
 			out << std::hex << p << "\t" << (char)i << std::endl;
 		}
-	}
+
 	return out;
 }
 
