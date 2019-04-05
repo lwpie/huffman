@@ -58,7 +58,7 @@ int main(int argv, char *argc[])
 #ifdef DEBUG
 	double sz = size;
 	std::string r = "BKMGTE";
-	long e = 0;
+	size_t e = 0;
 	while (sz >= 1024)
 	{
 		sz /= 1024;

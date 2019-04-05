@@ -14,10 +14,10 @@
 struct HuffmanNode
 {
 	char value;
-	long weight;
+	size_t weight;
 	HuffmanNode *left;
 	HuffmanNode *right;
-	HuffmanNode(char c, long v);
+	HuffmanNode(char c, size_t v);
 	HuffmanNode(HuffmanNode *l, HuffmanNode *r);
 };
 

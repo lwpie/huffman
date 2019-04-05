@@ -1,7 +1,7 @@
 #include "huffman.h"
 #include <cstring>
 
-HuffmanNode::HuffmanNode(char c, long v)
+HuffmanNode::HuffmanNode(char c, size_t v)
 	: value(c), weight(v), left(NULL), right(NULL){};
 
 HuffmanNode::HuffmanNode(HuffmanNode *l, HuffmanNode *r) : left(l), right(r)
@@ -86,7 +86,7 @@ std::ostream &operator<<(std::ostream &out, const HuffmanTable &x)
 	for (int i = 0; i < x.code.size(); ++i)
 		if (x.code[i].size() != 0)
 		{
-			long p = 0;
+			size_t p = 0;
 			for (int j = 0; j < x.code[i].size(); j++)
 				p += (x.code[i][j] * (1 << j));
 			out << std::hex << p << "\t" << x.code[i].size() << "\t" << (char)i
