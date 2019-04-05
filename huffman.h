@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstring>
 #include <fstream>
@@ -9,9 +10,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <array>
 
-struct HuffmanNode {
+struct HuffmanNode
+{
 	char value;
 	long weight;
 	HuffmanNode *left;
@@ -20,21 +21,20 @@ struct HuffmanNode {
 	HuffmanNode(HuffmanNode *l, HuffmanNode *r);
 };
 
-class HuffmanTable {
-
-private:
+class HuffmanTable
+{
+  private:
 	void dfs(HuffmanNode *node, std::vector<int> &path);
 	std::array<std::vector<int>, 256> code;
 	size_t count[256] = {0};
 	HuffmanNode *tree = NULL;
 	friend std::ostream &operator<<(std::ostream &out, const HuffmanTable &x);
 
-public:
+  public:
 	void insert(char c);
 	void construct();
 	void destruct(HuffmanNode *node);
 	void walk();
 	size_t encode(char *buffer, size_t size, std::ostream &out);
 	~HuffmanTable();
-
 };

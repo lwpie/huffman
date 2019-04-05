@@ -88,10 +88,9 @@ std::ostream &operator<<(std::ostream &out, const HuffmanTable &x)
 		{
 			long p = 0;
 			for (int j = 0; j < x.code[i].size(); j++)
-			{
 				p += (x.code[i][j] * (1 << j));
-			}
-			out << std::hex << p << "\t" << (char)i << std::endl;
+			out << std::hex << p << "\t" << x.code[i].size() << "\t" << (char)i
+				<< std::endl;
 		}
 
 	return out;
