@@ -113,16 +113,14 @@ size_t HuffmanTable::encode(char *buffer, size_t size, std::ostream &out)
 
 	memset(buf, 0, q);
 
+	size_t ptr = 0;
+	int power = 1;
+	for (int i = 0; i < size; i++)
 	{
-		size_t ptr = 0;
-		int power = 1;
-		for (int i = 0; i < size; i++)
+		for (auto j : code[(uint8_t)buffer[i]])
 		{
-			for (auto j : code[(uint8_t)buffer[i]])
-			{
-				buf[ptr++ >> 3] += j * power;
-				power == 1 << 7 ? power = 1 : power <<= 1;
-			}
+			buf[ptr++ >> 3] += j * power;
+			power == 1 << 7 ? power = 1 : power <<= 1;
 		}
 	}
 

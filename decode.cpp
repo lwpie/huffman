@@ -72,9 +72,10 @@ int main(int argv, char *argc[])
 		in.get(c);
 		code.insert(std::make_pair(v, std::make_pair(c, offset)));
 	}
-	char a, b;
-	in.get(a);
-	in.get(b);
+#ifdef DEBUG
+	now = clock();
+	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tHuffman Table Constructed" << std::endl;
+#endif
 	size_t p, cnt = 0;
 	in >> p;
 	in.get();
@@ -91,32 +92,23 @@ int main(int argv, char *argc[])
 		int o = 0;
 		while (o < stream.size())
 		{
-			s += stream[o] * (1 << o);
+			s += stream[o] * (1 << o++);
 			auto ptr = code.find(s);
-			if (ptr != code.end())
+			if ((ptr != code.end()) && (o == ptr->second.second))
 			{
-				bool match = true;
-				if (ptr->second.second >= stream.size())
-					break;
-				for (int j = o + 1; j < ptr->second.second; j++)
-					if (stream[j] != 0)
-					{
-						match = false;
-						break;
-					}
-				if (match)
-				{
-					out << ptr->second.first;
-					stream.erase(stream.begin(), stream.begin() + ptr->second.second);
-					s = 0;
-					o = -1;
-				}
+
+				out << ptr->second.first;
+				stream.erase(stream.begin(), stream.begin() + ptr->second.second);
+				s = 0;
+				o = 0;
 			}
-			o++;
 		}
 	}
 	out << "\0";
-
+#ifdef DEBUG
+	now = clock();
+	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tFile Decoded" << std::endl;
+#endif
 	in.close();
 	out.close();
 	return 0;
