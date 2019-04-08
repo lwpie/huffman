@@ -1,14 +1,7 @@
-#include <array>
-#include <bitset>
-#include <cmath>
-#include <cstring>
+#include "huffman.h"
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <unordered_map>
-#include <set>
-#include <queue>
-#include <vector>
 
 #ifdef DEBUG
 #include <ctime>
@@ -20,6 +13,7 @@ int main(int argv, char *argc[])
 	clock_t start = clock();
 	std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(2);
 #endif
+
 	// get command line parameters
 	if ((argv != 4) ||
 		((strcmp(argc[1], "-o") != 0) && (strcmp(argc[3], "-o") != 0)))
@@ -56,59 +50,76 @@ int main(int argv, char *argc[])
 	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tStarted" << std::endl;
 #endif
 
-	// decode
-	in >> std::hex;
-	std::unordered_map<int, std::pair<char, int>> code;
-	std::queue<int> stream;
+	// load huffman table
+	HuffmanTable hash;
 	int n;
-	in >> n;
+	in >> std::hex >> n;
+	in.get();
 	for (int i = 0; i < n; i++)
 	{
 		char c;
-		int v, offset;
-		in >> v >> offset;
-		in.get();
+		size_t v;
 		in.get(c);
-		code.insert(std::make_pair(v, std::make_pair(c, offset)));
+		in >> v;
+		in.get();
+		hash.insert(c, v);
 	}
+	hash.construct();
+
 #ifdef DEBUG
 	now = clock();
-	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tHuffman Table Loaded" << std::endl;
+	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tHuffman Loaded" << std::endl;
 #endif
-	size_t p, cnt = 0;
-	in >> p;
+
+	// decode
+	size_t size;
+	in >> size;
 	in.get();
-	size_t t = std::ceil(p / 8.0);
-	size_t s = 0;
-	int o = 0;
-	for (size_t q = 0; q < t; q++)
+	size_t byte = std::ceil(size / 8.0);
+	std::filebuf *ptr;
+	ptr = in.rdbuf();
+	char *buffer = new char[byte];
+	ptr->sgetn(buffer, byte);
+	in.close();
+
+#ifdef DEBUG
+	double sz = std::ceil(size / 8.0);
+	std::string r = "BKMGTE";
+	size_t e = 0;
+	while (sz >= 1024)
 	{
-		char c;
-		in.get(c);
-		std::bitset<8> byte((uint8_t)c);
-		for (int i = 0; i < std::min((size_t)8, (p - cnt)); i++)
-			stream.push(byte.test(i));
-		cnt += 8;
-		while (stream.size() != 0)
-		{
-			auto f = stream.front();
-			stream.pop();
-			s += f * (1 << o++);
-			auto ptr = code.find(s);
-			if ((ptr != code.end()) && (o == ptr->second.second))
-			{
-				out << ptr->second.first;
-				s = 0;
-				o = 0;
-			}
-		}
+		sz /= 1024;
+		e++;
 	}
-	out << "\0";
+	std::cout << "File Size: " << std::setiosflags(std::ios::fixed)
+			  << std::setprecision(2) << std::ceil(size / 8.0) / pow(1024, e) << r[e] << std::endl;
+	now = clock();
+	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tFile Read"
+			  << std::endl;
+#endif
+
+	hash.decode(buffer, size, out);
+	out.close();
+
 #ifdef DEBUG
 	now = clock();
 	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tFile Decoded" << std::endl;
 #endif
-	in.close();
-	out.close();
+
+#ifdef DEBUG
+	now = clock();
+	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tStopped" << std::endl;
+	sz = std::ceil(size / 8.0) / ((now - start + 0.0) / CLOCKS_PER_SEC);
+	e = 0;
+	while (sz >= 1024)
+	{
+		sz /= 1024;
+		e++;
+	}
+	std::cout << "Overall Speed: "
+			  << std::ceil(size / 8.0) / ((now - start + 0.0) / CLOCKS_PER_SEC) / pow(1024, e)
+			  << r[e] << "/s" << std::endl;
+#endif
+
 	return 0;
 }

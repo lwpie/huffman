@@ -1,5 +1,7 @@
 #include "huffman.h"
 #include <cstring>
+#include <cmath>
+#include <bitset>
 
 HuffmanNode::HuffmanNode(char c, size_t v)
 	: value(c), weight(v), left(NULL), right(NULL){};
@@ -9,7 +11,7 @@ HuffmanNode::HuffmanNode(HuffmanNode *l, HuffmanNode *r) : left(l), right(r)
 	weight = l->weight + r->weight;
 }
 
-void HuffmanTable::insert(char c) { count[(uint8_t)c]++; }
+void HuffmanTable::insert(char c, size_t v) { count[(uint8_t)c] += v; }
 
 void HuffmanTable::construct()
 {
@@ -79,20 +81,14 @@ std::ostream &operator<<(std::ostream &out, const HuffmanTable &x)
 {
 	out << std::hex;
 	int t = 0;
-	for (int i = 0; i < x.code.size(); ++i)
-		if (x.code[i].size() != 0)
+	for (int i = 0; i < 256; i++)
+		if (x.count[i] != 0)
 			t++;
 	out << t << std::endl;
 
-	for (int i = 0; i < x.code.size(); ++i)
-		if (x.code[i].size() != 0)
-		{
-			size_t p = 0;
-			for (int j = 0; j < x.code[i].size(); j++)
-				p += (x.code[i][j] * (1 << j));
-			out << p << "\t" << x.code[i].size() << "\t" << (char)i
-				<< std::endl;
-		}
+	for (int i = 0; i < 256; i++)
+		if (x.count[i] != 0)
+			out << (char)(uint8_t)i << '\t' << x.count[i] << std::endl;
 
 	return out;
 }
@@ -128,6 +124,32 @@ size_t HuffmanTable::encode(char *buffer, size_t size, std::ostream &out)
 
 	delete[] buf;
 	return q;
+}
+
+void HuffmanTable::decode(char *buffer, size_t size, std::ostream &out)
+{
+	size_t t = std::ceil(size / 8.0);
+	size_t cnt = 0;
+	HuffmanNode *node = tree;
+	for (size_t i = 0; i < t; i++)
+	{
+		std::bitset<8> byte((uint8_t)buffer[i]);
+		for (int j = 0; j < std::min((size_t)8, size - cnt); j++)
+		{
+			bool p = byte.test(j);
+			if (p == 0)
+				node = node->left;
+			else
+				node = node->right;
+			if ((node->left == NULL) && (node->right == NULL))
+			{
+				out << node->value;
+				node = tree;
+			}
+		}
+		cnt += 8;
+	}
+	return;
 }
 
 HuffmanTable::~HuffmanTable() { destruct(tree); }

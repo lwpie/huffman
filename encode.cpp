@@ -74,7 +74,7 @@ int main(int argv, char *argc[])
 	HuffmanTable hash;
 	for (size_t i = 0; i < size; i++)
 	{
-		hash.insert(buffer[i]);
+		hash.insert(buffer[i], 1);
 	}
 #ifdef DEBUG
 	now = clock();

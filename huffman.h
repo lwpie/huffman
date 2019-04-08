@@ -31,10 +31,11 @@ class HuffmanTable
 	friend std::ostream &operator<<(std::ostream &out, const HuffmanTable &x);
 
   public:
-	void insert(char c);
+	void insert(char c, size_t v);
 	void construct();
 	void destruct(HuffmanNode *node);
 	void walk();
 	size_t encode(char *buffer, size_t size, std::ostream &out);
+	void decode(char *buffer, size_t size, std::ostream &out);
 	~HuffmanTable();
 };
