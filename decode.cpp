@@ -59,8 +59,7 @@ int main(int argv, char *argc[])
 	// decode
 	in >> std::hex;
 	std::unordered_map<int, std::pair<char, int>> code;
-	std::vector<int> stream;
-	stream.reserve(16);
+	std::queue<int> stream;
 	int n;
 	in >> n;
 	for (int i = 0; i < n; i++)
@@ -74,31 +73,31 @@ int main(int argv, char *argc[])
 	}
 #ifdef DEBUG
 	now = clock();
-	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tHuffman Table Constructed" << std::endl;
+	std::cout << (now - start + 0.0) / CLOCKS_PER_SEC << "\tHuffman Table Loaded" << std::endl;
 #endif
 	size_t p, cnt = 0;
 	in >> p;
 	in.get();
 	size_t t = std::ceil(p / 8.0);
+	size_t s = 0;
+	int o = 0;
 	for (size_t q = 0; q < t; q++)
 	{
 		char c;
 		in.get(c);
 		std::bitset<8> byte((uint8_t)c);
 		for (int i = 0; i < std::min((size_t)8, (p - cnt)); i++)
-			stream.push_back(byte.test(i));
+			stream.push(byte.test(i));
 		cnt += 8;
-		size_t s = 0;
-		int o = 0;
-		while (o < stream.size())
+		while (stream.size() != 0)
 		{
-			s += stream[o] * (1 << o++);
+			auto f = stream.front();
+			stream.pop();
+			s += f * (1 << o++);
 			auto ptr = code.find(s);
 			if ((ptr != code.end()) && (o == ptr->second.second))
 			{
-
 				out << ptr->second.first;
-				stream.erase(stream.begin(), stream.begin() + ptr->second.second);
 				s = 0;
 				o = 0;
 			}
