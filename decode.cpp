@@ -117,7 +117,7 @@ int main(int argv, char *argc[])
 		e++;
 	}
 	std::cout << "Overall Speed: "
-			  << std::ceil(size / 8.0) / ((now - start + 0.0) / CLOCKS_PER_SEC) / pow(1024, e)
+			  << total / ((now - start + 0.0) / CLOCKS_PER_SEC) / pow(1024, e)
 			  << r[e] << "/s" << std::endl;
 #endif
 
