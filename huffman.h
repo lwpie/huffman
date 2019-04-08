@@ -36,6 +36,6 @@ class HuffmanTable
 	void destruct(HuffmanNode *node);
 	void walk();
 	size_t encode(char *buffer, size_t size, std::ostream &out);
-	void decode(char *buffer, size_t size, std::ostream &out);
+	void decode(char *buffer, size_t size, size_t total, std::ostream &out);
 	~HuffmanTable();
 };

@@ -102,7 +102,7 @@ size_t HuffmanTable::encode(char *buffer, size_t size, std::ostream &out)
 	for (int i = 0; i < code.size(); i++)
 		if (code[i].size() != 0)
 			p += (code[i].size() * count[i]);
-	out << p << std::endl;
+	out << size << '\t' << p << std::endl;
 
 	size_t q = std::ceil(p / 8.0);
 	char *buf = new char[q];
@@ -126,8 +126,10 @@ size_t HuffmanTable::encode(char *buffer, size_t size, std::ostream &out)
 	return q;
 }
 
-void HuffmanTable::decode(char *buffer, size_t size, std::ostream &out)
+void HuffmanTable::decode(char *buffer, size_t size, size_t total, std::ostream &out)
 {
+	char *buf = new char[total];
+	size_t ptr = 0;
 	size_t t = std::ceil(size / 8.0);
 	size_t cnt = 0;
 	HuffmanNode *node = tree;
@@ -143,12 +145,13 @@ void HuffmanTable::decode(char *buffer, size_t size, std::ostream &out)
 				node = node->right;
 			if ((node->left == NULL) && (node->right == NULL))
 			{
-				out << node->value;
+				buf[ptr++] = node->value;
 				node = tree;
 			}
 		}
 		cnt += 8;
 	}
+	out.write(buf, total);
 	return;
 }
 

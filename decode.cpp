@@ -72,8 +72,8 @@ int main(int argv, char *argc[])
 #endif
 
 	// decode
-	size_t size;
-	in >> size;
+	size_t total, size;
+	in >> total >> size;
 	in.get();
 	size_t byte = std::ceil(size / 8.0);
 	std::filebuf *ptr;
@@ -98,7 +98,7 @@ int main(int argv, char *argc[])
 			  << std::endl;
 #endif
 
-	hash.decode(buffer, size, out);
+	hash.decode(buffer, size, total, out);
 	out.close();
 
 #ifdef DEBUG
