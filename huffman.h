@@ -10,6 +10,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <iomanip>
+#include <cmath>
+#include <bitset>
 
 struct HuffmanNode
 {
@@ -23,14 +26,14 @@ struct HuffmanNode
 
 class HuffmanTable
 {
-  private:
+private:
 	void dfs(HuffmanNode *node, std::vector<int> &path);
 	std::array<std::vector<int>, 256> code;
 	size_t count[256] = {0};
 	HuffmanNode *tree = NULL;
 	friend std::ostream &operator<<(std::ostream &out, const HuffmanTable &x);
 
-  public:
+public:
 	void insert(char c, size_t v);
 	void construct();
 	void destruct(HuffmanNode *node);

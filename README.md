@@ -3,8 +3,8 @@
 ## Usage
 
 ```
-encode -o output input
-decode -o output input
+encode --infile input --outfile output
+decode --infile input --outfile output
 ```
 
 ## Speed
@@ -14,7 +14,7 @@ Tested on ```i5-8265U CPU @ 1.60GHz```, single core.
 Use ```2018-11-13-raspbian-stretch-lite.img``` as example file.
 
 ```
-λ encode -o d j
+λ encode --infile j --outfile d
 0.00	Started
 File Size: 1.74G
 0.83	File Read
@@ -28,7 +28,7 @@ Compression Rate: 47.68%
 ```
 
 ```
-λ decode -o s d
+λ decode --infile d --outfile s
 0.18	Started
 0.19	Huffman Loaded
 File Size: 848.76M

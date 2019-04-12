@@ -1,7 +1,4 @@
 #include "huffman.h"
-#include <cstring>
-#include <cmath>
-#include <bitset>
 
 HuffmanNode::HuffmanNode(char c, size_t v)
 	: value(c), weight(v), left(NULL), right(NULL){};

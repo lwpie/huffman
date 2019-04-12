@@ -1,13 +1,14 @@
+#include "gflags/gflags.h"
 #include "huffman.h"
-#include <fstream>
-#include <iomanip>
-#include <iostream>
+
+DEFINE_string(infile, "input", "Input file name");
+DEFINE_string(outfile, "output", "Output file name");
 
 #ifdef DEBUG
 #include <ctime>
 #endif
 
-int main(int argv, char *argc[])
+int main(int argc, char **argv)
 {
 #ifdef DEBUG
 	clock_t start = clock();
@@ -15,30 +16,18 @@ int main(int argv, char *argc[])
 #endif
 
 	// get command line parameters
-	if ((argv != 4) ||
-		((strcmp(argc[1], "-o") != 0) && (strcmp(argc[3], "-o") != 0)))
-	{
-		std::cerr << "Invalid Input" << std::endl;
-		return 1;
-	}
-	std::string infile, outfile;
-	if (strcmp(argc[1], "-o") == 0)
-	{
-		outfile = argc[2];
-		infile = argc[3];
-	}
-	else
-	{
-		outfile = argc[3];
-		infile = argc[2];
-	}
+	gflags::SetVersionString("0.1.0");
+	gflags::SetUsageMessage("Usage: ./decode --infile path-to-input-file --outfile path-to-output-file");
+	gflags::ParseCommandLineFlags(&argc, &argv, true);
+
 	std::ifstream in;
-	in.open(infile, std::ios::binary);
+	in.open(FLAGS_infile, std::ios::binary);
 	std::ofstream out;
-	out.open(outfile, std::ios::binary);
+	out.open(FLAGS_outfile, std::ios::binary);
 	if (!in || !out)
 	{
 		std::cerr << "File Open Failure" << std::endl;
+		std::cerr << gflags::ProgramUsage() << std::endl;
 		return 1;
 	}
 	in.sync_with_stdio(false);
