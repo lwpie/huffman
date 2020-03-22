@@ -42,10 +42,11 @@ int main(int argc, char **argv)
 	// read entire file to memory
 	std::filebuf *ptr;
 	ptr = in.rdbuf();
-	auto size = ptr->pubseekoff(0, std::ios::end, std::ios::in);
-	ptr->pubseekpos(0, std::ios::in);
+	size_t size = ptr->pubseekoff(0, std::ios::end, std::ios::in);
 	char *buffer = new char[size];
-	ptr->sgetn(buffer, size);
+	ptr->pubseekpos(0, std::ios::in);
+	for (size_t i = 0; (i << 10) < size; i++)
+		ptr->sgetn(buffer + (i << 10), std::min(size_t(1 << 10), size - (i << 10)));
 	in.close();
 
 #ifdef DEBUG

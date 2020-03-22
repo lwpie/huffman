@@ -68,7 +68,8 @@ int main(int argc, char **argv)
 	std::filebuf *ptr;
 	ptr = in.rdbuf();
 	char *buffer = new char[byte];
-	ptr->sgetn(buffer, byte);
+	for (size_t i = 0; (i << 10) < byte; i++)
+		ptr->sgetn(buffer + (i << 10), std::min(size_t(1 << 10), byte - (i << 10)));
 	in.close();
 
 #ifdef DEBUG

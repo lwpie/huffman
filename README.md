@@ -40,6 +40,6 @@ Overall Speed: 88.94M/s
 
 ## To-dos
 
-- Improve cli parameters parsing
+- Improve cli parameters parsing (done)
 
-- Support files greater than size_t
+- Support files greater than size_t (done)

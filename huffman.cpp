@@ -103,7 +103,6 @@ size_t HuffmanTable::encode(char *buffer, size_t size, std::ostream &out)
 
 	size_t q = std::ceil(p / 8.0);
 	char *buf = new char[q];
-
 	memset(buf, 0, q);
 
 	size_t ptr = 0;
@@ -117,7 +116,8 @@ size_t HuffmanTable::encode(char *buffer, size_t size, std::ostream &out)
 		}
 	}
 
-	out.write(buf, q);
+	for (size_t i = 0; (i << 10) < q; i++)
+		out.write(buf + (i << 10), std::min(size_t(1 << 10), q - (i << 10)));
 
 	delete[] buf;
 	return q;
@@ -148,7 +148,11 @@ void HuffmanTable::decode(char *buffer, size_t size, size_t total, std::ostream 
 		}
 		cnt += 8;
 	}
-	out.write(buf, total);
+
+	for (size_t i = 0; (i << 10) < total; i++)
+		out.write(buf + (i << 10), std::min(size_t(1 << 10), total - (i << 10)));
+
+	delete[] buf;
 	return;
 }
 
